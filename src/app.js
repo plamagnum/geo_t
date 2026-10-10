@@ -130,8 +130,10 @@
     let target = null;
     let score = 0;
     const startTask = () => {
-      target = Math.floor(Math.random() * 360);
-      task.textContent = `Визнач азимут напрямку ${target}° (допуск ±10°).`;
+      const directions = ["Пн", "Пн-ПнСх", "ПнСх", "Сх-ПнСх", "Сх", "Сх-ПдСх", "ПдСх", "Пд-ПдСх", "Пд", "Пд-ПдЗх", "ПдЗх", "Зх-ПдЗх", "Зх", "Зх-ПнЗх", "ПнЗх", "Пн-ПнЗх"];
+      const index = Math.floor(Math.random() * directions.length);
+      target = index * 22.5;
+      task.textContent = `Визнач азимут напрямку «${directions[index]}» (допуск ±10°).`;
       answer.value = "";
       feedback.textContent = "";
     };

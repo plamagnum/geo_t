@@ -154,13 +154,12 @@
         const a = Number(heightA.value) || 0;
         const b = Number(heightB.value) || 0;
         const { canvas, ctx } = heightView;
-        const baseline = canvas.height - 36;
+        const zeroY = canvas.height / 2;
         const range = Math.max(20, Math.abs(a), Math.abs(b));
-        const factor = (canvas.height - 76) / (range * 2.1);
+        const factor = (canvas.height / 2 - 36) / range;
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         ctx.fillStyle = "#fbfdfb";
         ctx.fillRect(0, 0, canvas.width, canvas.height);
-        const zeroY = baseline - (0 + range) * factor;
         ctx.strokeStyle = "#d64c44";
         ctx.setLineDash([6, 4]);
         ctx.beginPath();
@@ -173,13 +172,13 @@
         ctx.fillText("0 м — нуль Кронштадтського футштока", 38, zeroY - 7);
         [a, b].forEach((value, index) => {
           const x = 165 + index * 270;
-          const y = baseline - (value + range) * factor;
+          const y = zeroY - value * factor;
           ctx.fillStyle = index === 0 ? "#4c9163" : "#79a2b9";
-          ctx.fillRect(x - 30, y, 60, baseline - y);
+          ctx.fillRect(x - 30, Math.min(y, zeroY), 60, Math.max(1, Math.abs(zeroY - y)));
           ctx.fillStyle = "#34463a";
           ctx.textAlign = "center";
-          ctx.fillText(`${fmt(value, 1)} м`, x, y - 8);
-          ctx.fillText(`Точка ${index === 0 ? "A" : "B"}`, x, baseline + 18);
+          ctx.fillText(`${fmt(value, 1)} м`, x, value >= 0 ? y - 8 : y + 17);
+          ctx.fillText(`Точка ${index === 0 ? "A" : "B"}`, x, canvas.height - 8);
         });
         heightDifference.textContent = `Перевищення: ${fmt(Math.abs(a - b), 1)} м; точка ${a >= b ? "A" : "B"} вище за точку ${a >= b ? "B" : "A"}.`;
       };
@@ -552,15 +551,16 @@
       const aTrue = ((Number(azimuth.value) || 0) % 360 + 360) % 360;
       const delta = Number(declination.value) || 0;
       const gamma = Number(convergence.value) || 0;
+      const formatRumbAngle = (value) => Number(value).toLocaleString("uk-UA", { minimumFractionDigits: 1, maximumFractionDigits: 1 });
       const magnetic = ((aTrue - delta) % 360 + 360) % 360;
       const gridAngle = ((aTrue - gamma) % 360 + 360) % 360;
       const back = (aTrue + 180) % 360;
       const quadrant = Math.floor(aTrue / 90);
       const within = aTrue % 90;
-      const rumba = quadrant === 0 ? `Пн ${fmt(within)}° Сх`
-        : quadrant === 1 ? `Пд ${fmt(90 - within)}° Сх`
-          : quadrant === 2 ? `Пд ${fmt(within)}° Зх`
-            : `Пн ${fmt(90 - within)}° Зх`;
+      const rumba = quadrant === 0 ? `Пн ${formatRumbAngle(within)}° Сх`
+        : quadrant === 1 ? `Пд ${formatRumbAngle(90 - within)}° Сх`
+          : quadrant === 2 ? `Пд ${formatRumbAngle(within)}° Зх`
+            : `Пн ${formatRumbAngle(90 - within)}° Зх`;
       directionText.textContent = `Aм = A − δ = ${fmt(magnetic)}°; α = A − γ = ${fmt(gridAngle)}°; зворотний азимут = ${fmt(back)}°; румб: ${rumba}.`;
       dctx.clearRect(0, 0, dc.width, dc.height);
       dctx.fillStyle = "#fbfdfb";
@@ -590,15 +590,30 @@
       drawRay(aTrue, "#d64c44", "A");
       const drawArc = (start, end, radiusArc, color) => {
         const startRad = (start - 90) * Math.PI / 180;
-        let endRad = (end - 90) * Math.PI / 180;
-        if (end < start) endRad += Math.PI * 2;
+        const endRad = (end - 90) * Math.PI / 180;
         dctx.beginPath();
         dctx.arc(cx, cy, radiusArc, startRad, endRad);
         dctx.strokeStyle = color;
         dctx.lineWidth = 2;
         dctx.stroke();
       };
+      const drawDeviation = (value, radiusArc, color, label) => {
+        const deviation = ((value + 180) % 360 + 360) % 360 - 180;
+        const startRad = -Math.PI / 2;
+        const endRad = startRad + deviation * Math.PI / 180;
+        dctx.beginPath();
+        dctx.arc(cx, cy, radiusArc, startRad, endRad, deviation < 0);
+        dctx.strokeStyle = color;
+        dctx.lineWidth = 2;
+        dctx.stroke();
+        const middle = deviation / 2 * Math.PI / 180 - Math.PI / 2;
+        dctx.fillStyle = color;
+        dctx.font = "11px system-ui";
+        dctx.fillText(label, cx + Math.cos(middle) * (radiusArc + 8), cy + Math.sin(middle) * (radiusArc + 8));
+      };
       drawArc(0, aTrue, radius * 0.48, "#d64c44");
+      drawDeviation(delta, radius * 0.35, "#4286b4", `δ ${fmt(delta)}°`);
+      drawDeviation(gamma, radius * 0.25, "#a26caa", `γ ${fmt(gamma)}°`);
       dctx.fillStyle = "#43574a";
       dctx.font = "12px system-ui";
       dctx.fillText(`A ${fmt(aTrue)}°`, cx + 7, cy - 9);
