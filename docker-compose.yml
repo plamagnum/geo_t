@@ -1,0 +1,8 @@
+services:
+  topo-maps:
+    build: .
+    ports:
+      - "8080:80"
+    restart: unless-stopped
+    # volumes:
+    #   - ./src:/usr/share/nginx/html:ro

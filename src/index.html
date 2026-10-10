@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Інтерактивний урок географії 8 класу про топографічні карти">
+  <title>Топографічні карти — географія, 8 клас</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="app.js" defer></script>
+  <script src="extra.js" defer></script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-inner">
+      <p class="eyebrow">Географія · 8 клас</p>
+      <h1>Топографічні карти</h1>
+      <p>Досліджуй місцевість, вимірюй відстані та читай карту</p>
+    </div>
+  </header>
+  <main class="container">
+    <nav id="tabs" aria-label="Розділи уроку">
+      <button class="tab active" data-tab="scale" type="button">Масштаб</button>
+      <button class="tab" data-tab="basis" type="button">Мат. основа</button>
+      <button class="tab" data-tab="azimuth" type="button">Азимут</button>
+      <button class="tab" data-tab="contours" type="button">Горизонталі</button>
+      <button class="tab" data-tab="forms" type="button">Форми рельєфу</button>
+      <button class="tab" data-tab="coordinates" type="button">Координати</button>
+      <button class="tab" data-tab="symbols" type="button">Умовні знаки</button>
+      <button class="tab" data-tab="quiz" type="button">Тест</button>
+    </nav>
+
+    <section class="panel active" id="panel-scale">
+      <div class="section-heading"><span class="section-number">01</span><div><h2>Масштаб карти</h2><p>Дізнайся, як відстань на карті пов’язана з місцевістю.</p></div></div>
+      <div class="grid2">
+        <article class="card">
+          <h3>Числовий та іменований масштаби</h3>
+          <label for="scale-select">Обери числовий масштаб</label>
+          <select id="scale-select">
+            <option value="1000">1:1 000</option><option value="2000">1:2 000</option><option value="5000">1:5 000</option>
+            <option value="10000">1:10 000</option><option value="25000">1:25 000</option><option value="50000">1:50 000</option>
+            <option value="100000">1:100 000</option><option value="200000">1:200 000</option><option value="500000">1:500 000</option>
+            <option value="1000000">1:1 000 000</option>
+          </select>
+          <p class="answer" id="named-scale" aria-live="polite">В 1 см — 10 м</p>
+          <p class="hint">Знаменник показує, у скільки разів відстань на місцевості більша за відстань на карті.</p>
+        </article>
+        <article class="card">
+          <h3>Карта → місцевість</h3>
+          <div class="input-row"><label for="map-distance">Відстань на карті, см</label><input id="map-distance" type="number" min="0" step="any" value="3"></div>
+          <p class="answer" id="ground-result" aria-live="polite">30 м</p>
+          <h3 class="subheading">Місцевість → карта</h3>
+          <div class="input-row"><label for="ground-distance">Відстань на місцевості, м</label><input id="ground-distance" type="number" min="0" step="any" value="750"></div>
+          <p class="answer" id="map-result" aria-live="polite">75 см</p>
+        </article>
+      </div>
+      <article class="card">
+        <h3>Порівняй масштаби</h3>
+        <div class="scale-compare">
+          <div><span class="scale-bar plan"></span><strong>План</strong><small>1:5 000</small></div>
+          <div><span class="scale-bar topo"></span><strong>Топокарта</strong><small>1:50 000</small></div>
+          <div><span class="scale-bar overview"></span><strong>Оглядова</strong><small>1:1 000 000</small></div>
+        </div>
+        <p class="hint">Що менший знаменник, то більший масштаб і докладніше зображення.</p>
+      </article>
+    </section>
+
+    <section class="panel" id="panel-basis">
+      <div class="section-heading"><span class="section-number">02</span><div><h2>Математична основа</h2><p>Як земну поверхню переносять на аркуші карти.</p></div></div>
+      <article class="card">
+        <h3>Проєкція Гаусса — Крюгера</h3>
+        <p>Введи довготу, щоб визначити 6-градусну зону та її осьовий меридіан.</p>
+        <div class="input-row"><label for="longitude-zone">Довгота, °</label><input id="longitude-zone" type="number" min="-180" max="180" step="any" value="30"></div>
+        <p class="answer" id="zone-result" aria-live="polite"></p>
+        <canvas id="zones-canvas" width="660" height="170" aria-label="Схема шістдесяти зон проєкції"></canvas>
+        <p class="hint">Наближений масштабний коефіцієнт поблизу осьового меридіана: k ≈ 0,9996. Еліпсоїд Красовського: a = 6 378 245 м, стиснення 1:298,3.</p>
+      </article>
+      <div class="grid2">
+        <article class="card">
+          <h3>Номенклатура аркуша</h3>
+          <div class="form-grid">
+            <label>Широта, °<input id="sheet-lat" type="number" min="-80" max="84" step="any" value="50.45"></label>
+            <label>Довгота, °<input id="sheet-lon" type="number" min="-180" max="180" step="any" value="30.52"></label>
+            <label>Масштаб<select id="sheet-scale"><option value="1000000">1:1 000 000</option><option value="500000">1:500 000</option><option value="200000">1:200 000</option><option value="100000">1:100 000</option><option value="50000">1:50 000</option><option value="25000">1:25 000</option><option value="10000">1:10 000</option></select></label>
+          </div>
+          <ol id="sheet-steps" class="steps"></ol>
+        </article>
+        <article class="card">
+          <h3>Розміри аркушів</h3>
+          <div class="table-wrap"><table><thead><tr><th>Масштаб</th><th>Розмір рамки</th><th>Поділ аркуша</th></tr></thead><tbody>
+            <tr><td>1:1 000 000</td><td>4° × 6°</td><td>Основа</td></tr><tr><td>1:500 000</td><td>2° × 3°</td><td>4 частини</td></tr>
+            <tr><td>1:200 000</td><td>40′ × 1°</td><td>36 частин</td></tr><tr><td>1:100 000</td><td>20′ × 30′</td><td>144 частини</td></tr>
+            <tr><td>1:50 000</td><td>10′ × 15′</td><td>4 частини</td></tr><tr><td>1:25 000</td><td>5′ × 7′30″</td><td>4 частини</td></tr><tr><td>1:10 000</td><td>2′30″ × 3′45″</td><td>4 частини</td></tr>
+          </tbody></table></div>
+        </article>
+      </div>
+      <article class="card">
+        <h3>Балтійська система висот</h3>
+        <div class="grid2 compact">
+          <label>Висота точки A, м<input id="height-a" type="number" value="125"></label>
+          <label>Висота точки B, м<input id="height-b" type="number" value="87"></label>
+        </div>
+        <p class="answer" id="height-difference" aria-live="polite"></p>
+        <canvas id="height-canvas" width="600" height="180" aria-label="Діаграма висот точок відносно нуля"></canvas>
+        <p class="hint">За нуль висот прийнято середній рівень Балтійського моря біля Кронштадтського футштока.</p>
+      </article>
+    </section>
+
+    <section class="panel" id="panel-azimuth">
+      <div class="section-heading"><span class="section-number">03</span><div><h2>Азимут</h2><p>Напрямок, виміряний за годинниковою стрілкою від півночі.</p></div></div>
+      <div class="grid2">
+        <article class="card center-card"><h3>Інтерактивний компас</h3><canvas id="compass-canvas" width="340" height="340" aria-label="Компас для визначення азимута"></canvas><p class="answer" id="compass-value">Натисни на компас</p><p class="hint">Клацни на колі, щоб визначити азимут.</p></article>
+        <article class="card"><h3>Тренажер азимуту</h3><p id="azimuth-task">Натисни кнопку, щоб отримати напрямок.</p><button class="button" id="new-azimuth" type="button">Нове завдання</button><div class="input-row"><label for="azimuth-answer">Твоя відповідь, °</label><input id="azimuth-answer" type="number" min="0" max="360" step="1"></div><button class="button secondary" id="check-azimuth" type="button">Перевірити</button><p id="azimuth-feedback" aria-live="polite"></p><p class="score">Правильних відповідей: <strong id="azimuth-score">0</strong></p></article>
+      </div>
+    </section>
+
+    <section class="panel" id="panel-contours">
+      <div class="section-heading"><span class="section-number">04</span><div><h2>Горизонталі</h2><p>Висота, форма схилу та профіль місцевості.</p></div></div>
+      <article class="card">
+        <div class="controls-row"><label for="contour-step">Висота перерізу<select id="contour-step"><option value="10">10 м</option><option value="20" selected>20 м</option><option value="50">50 м</option></select></label><button id="regenerate-terrain" class="button" type="button">Згенерувати інший рельєф</button></div>
+        <div class="terrain-layout"><div class="canvas-wrap"><canvas id="terrain-canvas" width="560" height="380" aria-label="Гіпсометрична карта рельєфу"></canvas><p class="canvas-caption">Наведи курсор, щоб побачити висоту; клацни, щоб побудувати профіль.</p><p id="terrain-height" class="answer" aria-live="polite">Висота: —</p></div><div class="profile-wrap"><h3>Профіль місцевості</h3><canvas id="profile-canvas" width="420" height="220" aria-label="Профіль рельєфу по вибраній лінії"></canvas></div></div>
+      </article>
+    </section>
+
+    <section class="panel" id="panel-forms">
+      <div class="section-heading"><span class="section-number">05</span><div><h2>Форми рельєфу</h2><p>Розпізнавай форми за горизонталями та бергштрихами.</p></div></div>
+      <article class="card">
+        <div class="controls-row"><label for="landform-select">Форма рельєфу<select id="landform-select"><option value="mountain">Гора</option><option value="depression">Западина</option><option value="ridge">Хребет</option><option value="valley">Долина</option><option value="gully">Яр</option><option value="saddle">Сідловина</option></select></label><label class="check-label"><input id="hachures-toggle" type="checkbox" checked> Бергштрихи</label><label class="check-label"><input id="elevation-toggle" type="checkbox" checked> Підписи висот</label></div>
+        <div class="terrain-layout"><div><canvas id="landform-canvas" width="540" height="360" aria-label="Модель форми рельєфу з горизонталями"></canvas></div><div><h3 id="landform-title">Гора</h3><p id="landform-description"></p><p class="hint" id="landform-clue"></p><canvas id="landform-profile" width="420" height="200" aria-label="Профіль вибраної форми рельєфу"></canvas></div></div>
+      </article>
+      <div class="grid2">
+        <article class="card"><h3>Крутизна схилу</h3><div class="form-grid"><label>Висота перерізу, м<input id="slope-height" type="number" min="1" value="20"></label><label>Закладення на карті, мм<input id="slope-distance" type="number" min="0.1" step="any" value="4"></label><label>Масштаб<select id="slope-scale"><option value="25000">1:25 000</option><option value="50000" selected>1:50 000</option><option value="100000">1:100 000</option><option value="200000">1:200 000</option></select></label></div><p id="slope-result" class="answer" aria-live="polite"></p><canvas id="slope-canvas" width="400" height="190" aria-label="Схема трикутника схилу"></canvas></article>
+        <article class="card"><h3>Вгадай форму рельєфу</h3><p id="landform-question">Натисни, щоб розпочати вікторину.</p><div id="landform-options" class="option-list"></div><p id="landform-feedback" aria-live="polite"></p><p class="score">Правильних відповідей: <strong id="landform-score">0</strong></p><button class="button" id="new-landform-question" type="button">Нове запитання</button></article>
+      </div>
+    </section>
+
+    <section class="panel" id="panel-coordinates">
+      <div class="section-heading"><span class="section-number">06</span><div><h2>Координати та орієнтування</h2><p>Знаходь точку на карті й описуй її положення.</p></div></div>
+      <article class="card">
+        <div class="controls-row"><div><h3>Кілометрова сітка</h3><p class="hint">Клацни на карту, щоб отримати прямокутні координати.</p></div><button id="coordinate-task" class="button" type="button">Завдання на координати</button></div>
+        <canvas id="grid-canvas" width="440" height="440" aria-label="Кілометрова сітка з географічними координатами рамки"></canvas>
+        <p class="answer" id="grid-result" aria-live="polite">X — кілометри на північ від екватора; Y — номер зони та координата східніше осьового меридіана.</p>
+        <p class="hint">До ординати Y умовно додають 500 км, щоб координати не були від’ємними; попереду записують номер зони.</p>
+      </article>
+      <div class="grid2">
+        <article class="card"><h3>Полярні та біполярні координати</h3><label for="polar-mode">Спосіб визначення<select id="polar-mode"><option value="one">1 пункт</option><option value="two">2 пункти</option></select></label><p class="hint" id="polar-help">Відстань і кут від опорного пункту.</p><canvas id="polar-canvas" width="420" height="300" aria-label="Схема полярних або біполярних координат"></canvas><p id="polar-result" class="answer" aria-live="polite">Клацни на схему, щоб перемістити об’єкт.</p></article>
+        <article class="card"><h3>Азимут, дирекційний кут і румб</h3><div class="form-grid"><label>Істинний азимут A, °<input id="true-azimuth" type="number" min="0" max="359.9" value="63"></label><label>Магнітне схилення δ, °<input id="declination" type="number" step="any" value="5"></label><label>Зближення меридіанів γ, °<input id="convergence" type="number" step="any" value="2"></label></div><p class="answer" id="direction-results" aria-live="polite"></p><canvas id="direction-canvas" width="360" height="300" aria-label="Істинний, магнітний і сітковий напрямки півночі та напрямок руху"></canvas></article>
+      </div>
+    </section>
+
+    <section class="panel" id="panel-symbols">
+      <div class="section-heading"><span class="section-number">07</span><div><h2>Умовні знаки</h2><p>Перевір знання символів топографічної карти.</p></div></div>
+      <div class="grid2">
+        <article class="card"><h3>Вікторина</h3><p>Що означає цей знак?</p><div id="symbol-question" class="symbol-question" aria-label="Знак для вгадування">🌲</div><div id="symbol-options" class="option-list"></div><p id="symbol-feedback" aria-live="polite"></p><button class="button" id="new-symbol" type="button">Наступний знак</button></article>
+        <article class="card"><h3>Довідник умовних знаків</h3><div id="symbol-guide" class="symbol-grid"></div></article>
+      </div>
+    </section>
+
+    <section class="panel" id="panel-quiz">
+      <div class="section-heading"><span class="section-number">08</span><div><h2>Підсумковий тест</h2><p>Шість запитань про топографічні карти.</p></div></div>
+      <article class="card"><form id="final-quiz"><div id="quiz-questions"></div><button class="button" type="submit">Перевірити відповіді</button></form><p id="quiz-result" class="answer" aria-live="polite"></p></article>
+    </section>
+  </main>
+  <footer><p>Навчальний матеріал з географії · Топографічні карти</p></footer>
+</body>
+</html>
